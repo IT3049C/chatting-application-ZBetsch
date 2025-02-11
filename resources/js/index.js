@@ -31,55 +31,46 @@ function messageFormat (message, myNameInput){
   }
 }
 
-
 function fetchMessages() {
   return fetch(serverURL)
     .then(response => response.json());
 }
 
-  async function updateMessagesInChatBox(){
-    const messages = await fetchMessages();
-    let formattedMessages = "";
-    messages.forEach(message => {
-      formattedMessages += messageFormat(message, nameInput.value);
-    });
-    chatBox.innerHTML = formattedMessages;
-  }
-
-  
-
-
-  async function sendMessages(username, text){
-    const message = {
-      sender: username,
-      text: text,
-      timestamp: new Date().toISOString()
-    };
-
-    await fetch(serverURL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(message)
-    });
-    await updateMessagesInChatBox();
-  }
-
-  sendButton.addEventListener("click", async function(event) {
-    event.preventDefault();
-    const sender = nameInput.value;
-    const message = myMessage.value;
-    await sendMessages(sender, message);
-    myMessage.value = "";
+async function updateMessagesInChatBox(){
+  const messages = await fetchMessages();
+  let formattedMessages = "";
+  messages.forEach(message => {
+    formattedMessages += messageFormat(message, nameInput.value);
   });
+  chatBox.innerHTML = formattedMessages;
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
 
-  //TEST CODE
-  //TESTING FOR CHATBOX UPDATE
-  // sendButton.addEventListener("click", function(event) {
-  //   event.preventDefault();
-  //   updateMessagesInChatBox();
-  // });
+async function sendMessages(username, text){
+  const message = {
+    sender: username,
+    text: text,
+    timestamp: new Date().toISOString()
+  };
 
-  updateMessagesInChatBox();
-  setInterval(updateMessagesInChatBox, 10000);
+  await fetch(serverURL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(message)
+  });
+  await updateMessagesInChatBox();
+}
+
+sendButton.addEventListener("click", async function(event) {
+  event.preventDefault();
+  const sender = nameInput.value;
+  const message = myMessage.value;
+  await sendMessages(sender, message);
+  // await updateMessagesInChatBox();
+  myMessage.value = "";
+});
+
+updateMessagesInChatBox();
+setInterval(updateMessagesInChatBox, 10000);
