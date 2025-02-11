@@ -3,26 +3,24 @@ const nameInput = document.getElementById("my-name-input");
 const myMessage = document.getElementById("my-message-input");
 const sendButton = document.getElementById("send-button");
 const chatBox = document.getElementById("chat");
+const serverURL = `https://it3049c-chat.fly.dev/messages`;
 
 function messageFormat (message, myNameInput){
   const time = new Date(message.timestamp);
   const formattedTime = `${time.getHours()}:${time.getMinutes()}`;
 
   if (myNameInput === message.sender) {
-    return
-      `<div class="mine messages">
+    return `<div class="mine messages">
         <div class="message">
           ${message.text}
         </div>
         <div class="sender-info">
           ${formattedTime}
         </div>
-      </div>`
-    ;    
+      </div>`;    
   }
   else {
-    return
-    `<div class="yours messages">
+    return `<div class="yours messages">
       <div class="message">
         ${message.text}
       </div>
@@ -32,61 +30,56 @@ function messageFormat (message, myNameInput){
     </div>`
   }
 }
-  function fetchMessages(){
-    function fetchMessages() {
-      return [
-        {
-          id: 1,
-          text: "This is my message",
-          sender: "Yahya Gilany",
-          timestamp: 1537410673072
-        },
-        {
-          id: 2,
-          text: "This is another message",
-          sender: "Yahya Gilany",
-          timestamp: 1537410673072
-        },
-        {
-          id: 3,
-          text: "This is a message from someone else",
-          sender: "Someone Else",
-          timestamp: 1537410673072
-        }
-      ];
-    }
-  }
 
-  function updateMessagesInChatBox(){
-    const messages = fetchMessages();
+
+function fetchMessages() {
+  return fetch(serverURL)
+    .then(response => response.json());
+}
+
+  async function updateMessagesInChatBox(){
+    const messages = await fetchMessages();
     let formattedMessages = "";
     messages.forEach(message => {
-      formattedMessages += formatMessage(message, nameInput.value);
+      formattedMessages += messageFormat(message, nameInput.value);
     });
     chatBox.innerHTML = formattedMessages;
   }
 
-  updateMessagesInChatBox();
+  
 
-  function sendMessage(username, text){
+
+  async function sendMessages(username, text){
     const message = {
       sender: username,
       text: text,
-      timestamp: Date.now()
+      timestamp: new Date().toISOString()
     };
 
-    const formattedMessage = formatMessage(message);
-    const chatBox = document.getElementById("chat");
-
-    chatBox.innerHTML += formattedMessage;
+    await fetch(serverURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(message)
+    });
+    await updateMessagesInChatBox();
   }
 
-  sendButton.addEventListener("click", function(event) {
+  sendButton.addEventListener("click", async function(event) {
     event.preventDefault();
     const sender = nameInput.value;
     const message = myMessage.value;
-    sendMessages(sender, message);
+    await sendMessages(sender, message);
     myMessage.value = "";
   });
 
+  //TEST CODE
+  //TESTING FOR CHATBOX UPDATE
+  // sendButton.addEventListener("click", function(event) {
+  //   event.preventDefault();
+  //   updateMessagesInChatBox();
+  // });
 
+  updateMessagesInChatBox();
+  setInterval(updateMessagesInChatBox, 10000);
