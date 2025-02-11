@@ -72,7 +72,7 @@ test.describe("Controller", () => {
 
     console.log("Received Response:", await response.json());
 
-    await page.waitForTimeout(1000); // Ensure UI updates before checking
+    await page.waitForTimeout(2000); // Ensure UI updates before checking
 
     const messagesDiv = page.locator("#chat");
     await expect(messagesDiv).toContainText(randomMessage);
