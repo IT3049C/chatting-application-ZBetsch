@@ -1,6 +1,6 @@
 //Constants for name, message, the send button, and the chatbox
 const nameInput = document.getElementById("my-name-input");
-const myMessage = document.getElementById("my-message");
+const myMessage = document.getElementById("my-message-input");
 const sendButton = document.getElementById("send-button");
 const chatBox = document.getElementById("chat");
 
@@ -31,7 +31,7 @@ function messageFormat (message, myNameInput){
       </div>
     </div>`
   }
-
+}
   function fetchMessages(){
     function fetchMessages() {
       return [
@@ -57,5 +57,36 @@ function messageFormat (message, myNameInput){
     }
   }
 
+  function updateMessagesInChatBox(){
+    const messages = fetchMessages();
+    let formattedMessages = "";
+    messages.forEach(message => {
+      formattedMessages += formatMessage(message, nameInput.value);
+    });
+    chatBox.innerHTML = formattedMessages;
+  }
 
-}
+  updateMessagesInChatBox();
+
+  function sendMessage(username, text){
+    const message = {
+      sender: username,
+      text: text,
+      timestamp: Date.now()
+    };
+
+    const formattedMessage = formatMessage(message);
+    const chatBox = document.getElementById("chat");
+
+    chatBox.innerHTML += formattedMessage;
+  }
+
+  sendButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    const sender = nameInput.value;
+    const message = myMessage.value;
+    sendMessages(sender, message);
+    myMessage.value = "";
+  });
+
+
