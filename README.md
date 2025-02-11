@@ -2,9 +2,9 @@ Chatting Application
 =====================
 
 ## Checklist:
-- [ ] make sure the assignment checks pass
-- [ ] fill out the self evaluation and Reflection
-- [ ] submit the repository link on Canvas
+- [X] make sure the assignment checks pass
+- [X] fill out the self evaluation and Reflection
+- [X] submit the repository link on Canvas
 
 ## Self-Reflection:
 <!-- Write your self-reflection under this line -->
